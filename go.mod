@@ -3,23 +3,25 @@ module github.com/Zhiyenbek/sp_users_main_service
 go 1.20
 
 require (
+	github.com/Zhiyenbek/users-auth-service v0.0.0-20240303153740-11e53d23fa4c
 	github.com/creasty/defaults v1.7.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.8.1
-	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v4 v4.17.2
-	github.com/lib/pq v1.10.2
 	github.com/spf13/viper v1.13.0
 	go.uber.org/zap v1.17.0
 )
 
 require (
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/fsnotify/fsnotify v1.5.4 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.10.0 // indirect
+	github.com/go-redis/redis/v7 v7.4.1 // indirect
 	github.com/goccy/go-json v0.9.7 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.13.0 // indirect

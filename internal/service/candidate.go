@@ -30,3 +30,25 @@ func (s *candidatesService) GetCandidatesBySearch(req *models.SearchArgs) ([]*mo
 func (s *candidatesService) GetCandidateByPublicID(publicID string) (*models.Candidate, error) {
 	return s.candidateRepo.GetCandidateByPublicID(publicID)
 }
+
+func (s *candidatesService) Exists(publicID string) error {
+	exists, err := s.candidateRepo.Exists(publicID)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return models.ErrPermissionDenied
+	}
+	return nil
+}
+
+func (s *candidatesService) AddSkillsToCandidate(candidateID string, skills []string) error {
+	return s.candidateRepo.AddSkillsToCandidate(candidateID, skills)
+}
+
+func (s *candidatesService) UpdateCandidateByID(candidateID string, updateData *models.Candidate) error {
+	return s.candidateRepo.UpdateCandidateByID(candidateID, updateData)
+}
+func (s *candidatesService) DeleteCandidateByID(candidateID string) error {
+	return s.candidateRepo.DeleteCandidateByID(candidateID)
+}

@@ -13,10 +13,16 @@ type Repository struct {
 }
 
 type RecruiterRepository interface {
+	Exists(publicID string) (bool, error)
+	GetRecruiter(publicID string) (*models.Recruiter, error)
 }
 type CandidateRepository interface {
 	GetCandidatesBySearch(searchArgs *models.SearchArgs) ([]*models.Candidate, int, error)
 	GetCandidateByPublicID(publicID string) (*models.Candidate, error)
+	Exists(publicID string) (bool, error)
+	AddSkillsToCandidate(candidateID string, skills []string) error
+	UpdateCandidateByID(candidateID string, updateData *models.Candidate) error
+	DeleteCandidateByID(candidateID string) error
 }
 
 func New(db *pgxpool.Pool, cfg *config.Configs, log *zap.SugaredLogger) *Repository {

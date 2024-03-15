@@ -7,11 +7,15 @@ import (
 
 	"github.com/Zhiyenbek/sp_users_main_service/internal/models"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 type GetCandidatesResult struct {
 	Candidates []*models.Candidate `json:"candidates"`
 	Count      int                 `json:"count"`
+}
+type skillsReq struct {
+	Skills []string `json:"skills"`
 }
 
 func (h *handler) GetCandidates(c *gin.Context) {
@@ -52,6 +56,37 @@ func (h *handler) GetCandidates(c *gin.Context) {
 	}, nil))
 }
 
+func (h *handler) UpdateCandidate(c *gin.Context) {
+	req := &models.Candidate{}
+	if err := c.ShouldBindJSON(req); err != nil {
+		h.logger.Errorf("failed to parse request body when updating candidate. %s\n", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, sendResponse(-1, nil, models.ErrInvalidInput))
+		return
+	}
+
+	publicID := c.GetString("public_id")
+	if err := h.service.CandidatesService.Exists(publicID); err != nil {
+		if errors.Is(err, models.ErrPermissionDenied) {
+			c.JSON(http.StatusUnauthorized, sendResponse(-1, nil, models.ErrPermissionDenied))
+			return
+		}
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	err := h.service.UpdateCandidateByID(publicID, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+
+	res, err := h.service.GetCandidateByPublicID(publicID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	c.JSON(http.StatusOK, sendResponse(0, res, nil))
+}
+
 func (h *handler) GetCandidateByPublicID(c *gin.Context) {
 	publicID := c.Param("candidate_public_id")
 	res, err := h.service.GetCandidateByPublicID(publicID)
@@ -71,4 +106,131 @@ func (h *handler) GetCandidateByPublicID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, sendResponse(0, res, nil))
+}
+
+func (h *handler) CreateSkillsForCandidate(c *gin.Context) {
+	req := &skillsReq{}
+	if err := c.ShouldBindWith(req, binding.JSON); err != nil {
+		h.logger.Errorf("failed to parse request body when signing up candidate. %s\n", err.Error())
+		c.AbortWithStatusJSON(400, sendResponse(-1, nil, models.ErrInvalidInput))
+		return
+	}
+	if len(req.Skills) == 0 {
+		c.JSON(http.StatusBadRequest, sendResponse(-1, nil, models.ErrInvalidInput))
+		return
+	}
+
+	publicID := c.GetString("public_id")
+	if err := h.service.CandidatesService.Exists(publicID); err != nil {
+		if errors.Is(err, models.ErrPermissionDenied) {
+			c.JSON(http.StatusUnauthorized, sendResponse(-1, nil, models.ErrPermissionDenied))
+			return
+		}
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	err := h.service.AddSkillsToCandidate(publicID, req.Skills)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	c.JSON(http.StatusCreated, sendResponse(0, nil, nil))
+}
+
+func (h *handler) DeleteSkillsFromCandidate(c *gin.Context) {
+	req := &skillsReq{}
+	if err := c.ShouldBindWith(req, binding.JSON); err != nil {
+		h.logger.Errorf("failed to parse request body when signing up candidate. %s\n", err.Error())
+		c.AbortWithStatusJSON(400, sendResponse(-1, nil, models.ErrInvalidInput))
+		return
+	}
+	if len(req.Skills) == 0 {
+		c.JSON(http.StatusBadRequest, sendResponse(-1, nil, models.ErrInvalidInput))
+		return
+	}
+
+	publicID := c.GetString("public_id")
+	if err := h.service.CandidatesService.Exists(publicID); err != nil {
+		if errors.Is(err, models.ErrPermissionDenied) {
+			c.JSON(http.StatusUnauthorized, sendResponse(-1, nil, models.ErrPermissionDenied))
+			return
+		}
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	err := h.service.AddSkillsToCandidate(publicID, req.Skills)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	c.JSON(http.StatusCreated, sendResponse(0, nil, nil))
+}
+
+func (h *handler) UpdateCandidateByPublicID(c *gin.Context) {
+	req := &models.Candidate{}
+	if err := c.ShouldBindJSON(req); err != nil {
+		h.logger.Errorf("failed to parse request body when updating candidate. %s\n", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, sendResponse(-1, nil, models.ErrInvalidInput))
+		return
+	}
+
+	publicID := c.Param("candidate_public_id")
+	if err := h.service.CandidatesService.Exists(publicID); err != nil {
+		if errors.Is(err, models.ErrPermissionDenied) {
+			c.JSON(http.StatusNotFound, sendResponse(-1, nil, models.ErrUserNotFound))
+			return
+		}
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	err := h.service.UpdateCandidateByID(publicID, req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+
+	res, err := h.service.GetCandidateByPublicID(publicID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	c.JSON(http.StatusOK, sendResponse(0, res, nil))
+}
+
+func (h *handler) DeleteCandidate(c *gin.Context) {
+	publicID := c.GetString("public_id")
+	if err := h.service.CandidatesService.Exists(publicID); err != nil {
+		if errors.Is(err, models.ErrPermissionDenied) {
+			c.JSON(http.StatusUnauthorized, sendResponse(-1, nil, models.ErrPermissionDenied))
+			return
+		}
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	err := h.service.DeleteCandidateByID(publicID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+
+	c.JSON(http.StatusOK, sendResponse(0, nil, nil))
+}
+
+func (h *handler) DeleteCandidateByPublicID(c *gin.Context) {
+	publicID := c.Param("candidate_public_id")
+	if err := h.service.CandidatesService.Exists(publicID); err != nil {
+		if errors.Is(err, models.ErrPermissionDenied) {
+			c.JSON(http.StatusNotFound, sendResponse(-1, nil, models.ErrUserNotFound))
+			return
+		}
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	err := h.service.DeleteCandidateByID(publicID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+
+	c.JSON(http.StatusOK, sendResponse(0, nil, nil))
 }

@@ -8,6 +8,7 @@ type Candidate struct {
 	Resume          *string     `json:"resume"`
 	Bio             *string     `json:"bio"`
 	Skills          []*string   `json:"skills"`
+	Photo           *string     `json:"photo"`
 	Interviews      []Interview `json:"interviews,omitempty"`
 	Education       *string     `json:"education"`
 }
