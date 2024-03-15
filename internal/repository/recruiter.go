@@ -28,14 +28,13 @@ func (r *recruiterRepository) GetRecruiter(publicID string) (*models.Recruiter, 
 	defer cancel()
 
 	// Retrieve the recruiter's information
-	recruiterQuery := `SELECT r.id, r.public_id, r.company_public_id, u.first_name, u.last_name, u.photo
+	recruiterQuery := `SELECT r.public_id, r.company_public_id, u.first_name, u.last_name, u.photo
 	FROM recruiters r
 	JOIN users u ON r.public_id = u.public_id
 	WHERE r.public_id = $1`
 
 	recruiter := &models.Recruiter{}
 	err := r.db.QueryRow(ctx, recruiterQuery, publicID).Scan(
-		&recruiter.ID,
 		&recruiter.PublicID,
 		&recruiter.CompanyPublicID,
 		&recruiter.FirstName,
@@ -49,13 +48,12 @@ func (r *recruiterRepository) GetRecruiter(publicID string) (*models.Recruiter, 
 	}
 
 	// Retrieve the company information
-	companyQuery := `SELECT c.id, c.public_id, c.name, c.description
+	companyQuery := `SELECT c.public_id, c.name, c.description
 	FROM companies c
 	WHERE c.public_id = $1`
 
 	company := &models.Company{}
 	err = r.db.QueryRow(ctx, companyQuery, recruiter.CompanyPublicID).Scan(
-		&company.ID,
 		&company.PublicID,
 		&company.Name,
 		&company.Description,
@@ -67,7 +65,7 @@ func (r *recruiterRepository) GetRecruiter(publicID string) (*models.Recruiter, 
 	}
 
 	// Retrieve all positions for the recruiter
-	positionsQuery := `SELECT p.id, p.public_id, p.name, p.status
+	positionsQuery := `SELECT p.public_id, p.name, p.status
 	FROM positions p
 	WHERE p.recruiters_public_id = $1`
 
@@ -82,7 +80,6 @@ func (r *recruiterRepository) GetRecruiter(publicID string) (*models.Recruiter, 
 	for rows.Next() {
 		position := models.Position{}
 		err := rows.Scan(
-			&position.ID,
 			&position.PublicID,
 			&position.Name,
 			&position.Status,
