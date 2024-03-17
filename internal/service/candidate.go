@@ -52,3 +52,7 @@ func (s *candidatesService) UpdateCandidateByID(candidateID string, updateData *
 func (s *candidatesService) DeleteCandidateByID(candidateID string) error {
 	return s.candidateRepo.DeleteCandidateByID(candidateID)
 }
+
+func (s *candidatesService) DeleteSkillsFromCandidate(candidateID string, skills []string) error {
+	return s.candidateRepo.DeleteSkillsFromCandidate(candidateID, skills)
+}

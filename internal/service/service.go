@@ -14,6 +14,7 @@ type CandidatesService interface {
 	AddSkillsToCandidate(candidateID string, skills []string) error
 	UpdateCandidateByID(candidateID string, updateData *models.Candidate) error
 	DeleteCandidateByID(candidateID string) error
+	DeleteSkillsFromCandidate(candidateID string, skills []string) error
 }
 type RecruiterService interface {
 	Exists(publicID string) error

@@ -23,6 +23,7 @@ type CandidateRepository interface {
 	AddSkillsToCandidate(candidateID string, skills []string) error
 	UpdateCandidateByID(candidateID string, updateData *models.Candidate) error
 	DeleteCandidateByID(candidateID string) error
+	DeleteSkillsFromCandidate(candidateID string, skills []string) error
 }
 
 func New(db *pgxpool.Pool, cfg *config.Configs, log *zap.SugaredLogger) *Repository {

@@ -38,6 +38,7 @@ func (h *handler) InitRoutes() *gin.Engine {
 	router.DELETE("/candidate/:candidate_public_id", h.DeleteCandidateByPublicID)
 	router.DELETE("/candidate", middleware.VerifyToken(h.cfg.Token.TokenSecret), h.DeleteCandidate)
 	router.POST("/candidate/skills", middleware.VerifyToken(h.cfg.Token.TokenSecret), h.CreateSkillsForCandidate)
+	router.DELETE("/candidate/skills", middleware.VerifyToken(h.cfg.Token.TokenSecret), h.DeleteSkillsFromCandidate)
 	return router
 }
 
