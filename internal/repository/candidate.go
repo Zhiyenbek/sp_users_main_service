@@ -250,13 +250,6 @@ func (r *candidateRepository) AddSkillsToCandidate(candidateID string, skills []
 		return err
 	}
 
-	// Rollback the transaction if an error occurs
-	defer func() {
-		if err != nil {
-			tx.Rollback(ctx)
-		}
-	}()
-
 	// Loop over the skills array
 	for _, skillName := range skills {
 		// Check if the skill already exists in the database
@@ -275,10 +268,12 @@ func (r *candidateRepository) AddSkillsToCandidate(candidateID string, skills []
 				err = tx.QueryRow(ctx, insertQuery, skillName).Scan(&skillID)
 				if err != nil {
 					r.logger.Errorf("Error inserting new skill: %v", err)
+					tx.Rollback(ctx)
 					return err
 				}
 			} else {
 				r.logger.Errorf("Error checking skill existence: %v", err)
+				tx.Rollback(ctx)
 				return err
 			}
 		}
@@ -288,11 +283,12 @@ func (r *candidateRepository) AddSkillsToCandidate(candidateID string, skills []
 		INSERT INTO candidate_skills (candidate_id, skill_id) VALUES (
 			(SELECT id FROM candidates WHERE public_id = $1),
 			$2
-		)
+		) ON CONFLICT DO NOTHING
 		`
 		_, err = tx.Exec(ctx, insertQuery, candidateID, skillID)
 		if err != nil {
 			r.logger.Errorf("Error adding skill to candidate: %v", err)
+			tx.Rollback(ctx)
 			return err
 		}
 	}
@@ -337,6 +333,7 @@ func (r *candidateRepository) DeleteSkillsFromCandidate(candidateID string, skil
 				continue // Skill doesn't exist, continue to the next skill
 			} else {
 				r.logger.Errorf("Error retrieving skill ID: %v", err)
+				tx.Rollback(ctx)
 				return err
 			}
 		}
@@ -349,6 +346,7 @@ func (r *candidateRepository) DeleteSkillsFromCandidate(candidateID string, skil
 		`
 		_, err = tx.Exec(ctx, deleteQuery, candidateID, skillID)
 		if err != nil {
+			tx.Rollback(ctx)
 			r.logger.Errorf("Error deleting skill from candidate: %v", err)
 			return err
 		}
