@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Zhiyenbek/sp_users_main_service/internal/app"
+	"github.com/Zhiyenbek/sp-users-main-service/internal/app"
 )
 
 func main() {

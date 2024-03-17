@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Zhiyenbek/sp_users_main_service/config"
+	"github.com/Zhiyenbek/sp-users-main-service/config"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 

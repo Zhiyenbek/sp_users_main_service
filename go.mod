@@ -1,4 +1,4 @@
-module github.com/Zhiyenbek/sp_users_main_service
+module github.com/Zhiyenbek/sp-users-main-service
 
 go 1.20
 

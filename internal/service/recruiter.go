@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/Zhiyenbek/sp_users_main_service/config"
-	"github.com/Zhiyenbek/sp_users_main_service/internal/models"
-	"github.com/Zhiyenbek/sp_users_main_service/internal/repository"
+	"github.com/Zhiyenbek/sp-users-main-service/config"
+	"github.com/Zhiyenbek/sp-users-main-service/internal/models"
+	"github.com/Zhiyenbek/sp-users-main-service/internal/repository"
 	"go.uber.org/zap"
 )
 

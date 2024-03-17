@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"github.com/Zhiyenbek/sp_users_main_service/config"
-	"github.com/Zhiyenbek/sp_users_main_service/internal/models"
+	"github.com/Zhiyenbek/sp-users-main-service/config"
+	"github.com/Zhiyenbek/sp-users-main-service/internal/models"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"go.uber.org/zap"
 )

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/Zhiyenbek/sp_users_main_service/internal/models"
+	"github.com/Zhiyenbek/sp-users-main-service/internal/models"
 	"github.com/gin-gonic/gin"
 )
 
