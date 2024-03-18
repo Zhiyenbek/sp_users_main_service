@@ -150,7 +150,7 @@ func (r *candidateRepository) GetCandidateByPublicID(publicID string) (*models.C
 		return nil, err
 	}
 
-	query = `SELECT array_agg(s.name) from skills s
+	query = `SELECT array_agg(DISTINCT s.name) from skills s
 	INNER JOIN candidate_skills cs ON cs.skill_id = s.id
 	INNER JOIN candidates c ON cs.candidate_id = c.id
 	WHERE cs.candidate_id = $1`
@@ -162,7 +162,7 @@ func (r *candidateRepository) GetCandidateByPublicID(publicID string) (*models.C
 		return nil, err
 	}
 
-	query = `SELECT array_agg(i.public_id) from interviews i
+	query = `SELECT array_agg(DISTINCT i.public_id) from interviews i
 	INNER JOIN user_interviews ui ON ui.interview_id = i.id
 	INNER JOIN candidates c ON ui.candidate_id = c.id
 	WHERE ui.candidate_id = $1`
