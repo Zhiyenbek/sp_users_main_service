@@ -65,5 +65,5 @@ func (h *handler) GetMe(c *gin.Context) {
 
 		c.JSON(http.StatusOK, sendResponse(0, res, nil))
 	}
-
+	c.JSON(http.StatusUnauthorized, sendResponse(0, nil, models.ErrPermissionDenied))
 }

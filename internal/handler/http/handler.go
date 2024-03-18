@@ -30,7 +30,7 @@ func New(services *service.Service, logger *zap.SugaredLogger, cfg *config.Confi
 func (h *handler) InitRoutes() *gin.Engine {
 	router := gin.Default()
 	router.Use(cors.Default())
-	router.GET("/account", h.GetMe)
+	router.GET("/account", middleware.VerifyToken(h.cfg.Token.TokenSecret), h.GetMe)
 	router.GET("/candidates", h.GetCandidates)
 	router.GET("/candidate/:candidate_public_id", h.GetCandidateByPublicID)
 	router.PUT("/candidate", middleware.VerifyToken(h.cfg.Token.TokenSecret), h.UpdateCandidate)
