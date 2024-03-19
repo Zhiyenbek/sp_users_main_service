@@ -17,6 +17,10 @@ type GetCandidatesResult struct {
 type skillsReq struct {
 	Skills []string `json:"skills"`
 }
+type InterviewResponse struct {
+	Interview []*models.InterviewResults `json:"interviews"`
+	Count     int                        `json:"count"`
+}
 
 func (h *handler) GetCandidates(c *gin.Context) {
 	pageNum, err := strconv.Atoi(c.Query("page_num"))
@@ -27,12 +31,11 @@ func (h *handler) GetCandidates(c *gin.Context) {
 	if err != nil || pageSize < 1 {
 		pageSize = models.DefaultPageSize
 	}
-	skills := c.QueryArray("skills")
+
 	searchArgs := &models.SearchArgs{
 		PageNum:  pageNum,
 		PageSize: pageSize,
 		Search:   c.Query("search"),
-		Skills:   skills, // Assign skills as an array
 	}
 	res, count, err := h.service.GetCandidatesBySearch(searchArgs)
 	if err != nil {
@@ -233,4 +236,76 @@ func (h *handler) DeleteCandidateByPublicID(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, sendResponse(0, nil, nil))
+}
+
+func (h *handler) GetCandidateInterviewsByID(c *gin.Context) {
+	publicID := c.Param("candidate_public_id")
+	if err := h.service.CandidatesService.Exists(publicID); err != nil {
+		if errors.Is(err, models.ErrPermissionDenied) {
+			c.JSON(http.StatusNotFound, sendResponse(-1, nil, models.ErrUserNotFound))
+			return
+		}
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	pageNum, err := strconv.Atoi(c.Query("page_num"))
+	if err != nil || pageNum < 1 {
+		pageNum = models.DefaultPageNum
+	}
+	pageSize, err := strconv.Atoi(c.Query("page_size"))
+	if err != nil || pageSize < 1 {
+		pageSize = models.DefaultPageSize
+	}
+
+	searchArgs := &models.SearchArgs{
+		PageNum:  pageNum,
+		PageSize: pageSize,
+		Search:   c.Query("search"),
+	}
+
+	res, count, err := h.service.CandidatesService.GetInterviewsByPublicID(publicID, searchArgs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	c.JSON(http.StatusOK, sendResponse(0, InterviewResponse{
+		Interview: res,
+		Count:     count,
+	}, nil))
+}
+
+func (h *handler) GetCandidateInterviews(c *gin.Context) {
+	publicID := c.GetString("public_id")
+	if err := h.service.CandidatesService.Exists(publicID); err != nil {
+		if errors.Is(err, models.ErrPermissionDenied) {
+			c.JSON(http.StatusNotFound, sendResponse(-1, nil, models.ErrUserNotFound))
+			return
+		}
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	pageNum, err := strconv.Atoi(c.Query("page_num"))
+	if err != nil || pageNum < 1 {
+		pageNum = models.DefaultPageNum
+	}
+	pageSize, err := strconv.Atoi(c.Query("page_size"))
+	if err != nil || pageSize < 1 {
+		pageSize = models.DefaultPageSize
+	}
+
+	searchArgs := &models.SearchArgs{
+		PageNum:  pageNum,
+		PageSize: pageSize,
+		Search:   c.Query("search"),
+	}
+
+	res, count, err := h.service.CandidatesService.GetInterviewsByPublicID(publicID, searchArgs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	c.JSON(http.StatusOK, sendResponse(0, InterviewResponse{
+		Interview: res,
+		Count:     count,
+	}, nil))
 }

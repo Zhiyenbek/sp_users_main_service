@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS candidate_skills (
 CREATE TABLE IF NOT EXISTS user_interviews (
     candidate_id INT,
     position_id INT,
-    interview_id INT,
+    interview_id INT UNIQUE,
     PRIMARY KEY (candidate_id, position_id, interview_id),
     CONSTRAINT fk_user_interviews_candidates FOREIGN KEY (candidate_id) REFERENCES candidates(id) ON DELETE CASCADE,
     CONSTRAINT fk_user_interviews_positions FOREIGN KEY (position_id) REFERENCES positions(id) ON DELETE CASCADE,

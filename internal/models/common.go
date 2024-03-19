@@ -11,5 +11,4 @@ type SearchArgs struct {
 	Search   string
 	PageNum  int
 	PageSize int
-	Skills   []string
 }

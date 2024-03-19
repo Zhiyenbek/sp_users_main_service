@@ -39,6 +39,15 @@ func (h *handler) InitRoutes() *gin.Engine {
 	router.DELETE("/candidate", middleware.VerifyToken(h.cfg.Token.TokenSecret), h.DeleteCandidate)
 	router.POST("/candidate/skills", middleware.VerifyToken(h.cfg.Token.TokenSecret), h.CreateSkillsForCandidate)
 	router.DELETE("/candidate/skills", middleware.VerifyToken(h.cfg.Token.TokenSecret), h.DeleteSkillsFromCandidate)
+	router.GET("/candidate/:candidate_public_id/interviews", h.GetCandidateInterviewsByID)
+	router.GET("/candidate/interviews", middleware.VerifyToken(h.cfg.Token.TokenSecret), h.GetCandidateInterviews)
+	router.GET("/recruiter/:recruiter_public_id", h.GetRecruiter)
+	router.GET("/recruiter/:recruiter_public_id/interviews", h.GetRecruiterInterviewsByID)
+	router.GET("/recruiter/interviews", middleware.VerifyToken(h.cfg.Token.TokenSecret), h.GetRecruiterInterviews)
+	router.POST("/company", h.CreateCompany)
+	router.GET("/companies", h.GetCompanies)
+	router.GET("/company/:public_id", h.GetCompany)
+	router.PUT("/company", h.UpdateCompany)
 	return router
 }
 

@@ -78,7 +78,6 @@ func (r *candidateRepository) GetCandidatesBySearch(searchArgs *models.SearchArg
 		r.logger.Errorf("Error occurred while fetching candidates count: %v", err)
 		return nil, 0, err
 	}
-	fmt.Println(searchArgs.Skills)
 
 	rows, err := r.db.Query(ctx, query, "%"+searchArgs.Search+"%", (searchArgs.PageNum-1)*searchArgs.PageSize, searchArgs.PageSize)
 	if err != nil && !errors.Is(err, pgx.ErrNoRows) {
@@ -375,4 +374,68 @@ func (r *candidateRepository) Exists(publicID string) (bool, error) {
 	}
 
 	return exists, nil
+}
+
+func (r *candidateRepository) GetInterviewsByPublicID(publicID string, searchArgs *models.SearchArgs) ([]*models.InterviewResults, int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), r.cfg.TimeOut)
+	defer cancel()
+
+	query := `
+	SELECT i.public_id, i.results
+	FROM interviews i
+	INNER JOIN user_interviews ui ON ui.interview_id = i.id
+	INNER JOIN candidates c ON c.id = ui.candidate_id
+	WHERE c.public_id = $1
+	GROUP BY i.public_id, i.results
+	LIMIT $2 OFFSET $3;
+`
+	offset := (searchArgs.PageNum - 1) * searchArgs.PageSize
+	rows, err := r.db.Query(ctx, query, publicID, searchArgs.PageSize, offset)
+	if err != nil {
+		if errors.Is(pgx.ErrNoRows, err) {
+			return nil, 0, nil
+		}
+		r.logger.Errorf("Error occurred while retrieving interview result: %v", err)
+		return nil, 0, err
+	}
+	defer rows.Close()
+	res := make([]*models.InterviewResults, 1)
+	for rows.Next() {
+		var resultBytes []byte
+		result := &models.InterviewResults{}
+		err = rows.Scan(
+			&result.PublicID,
+			&resultBytes,
+		)
+		if err != nil {
+			r.logger.Errorf("Error occurred while retrieving interview result: %v", err)
+			return nil, 0, err
+		}
+		result.RawResult = resultBytes
+		res = append(res, result)
+	}
+
+	if err := rows.Err(); err != nil {
+		r.logger.Errorf("Error occurred while iterating over interview result for position rows: %v", err)
+		return nil, 0, err
+	}
+	query = `
+	SELECT COUNT(*)
+	FROM interviews i
+	INNER JOIN user_interviews ui ON ui.interview_id = i.id
+	INNER JOIN candidates c ON c.id = ui.candidate_id
+	WHERE c.public_id = $1
+	GROUP BY i.public_id, i.results
+`
+	var totalCount int
+	err = r.db.QueryRow(ctx, query, publicID).Scan(&totalCount)
+	if err != nil {
+		if errors.Is(pgx.ErrNoRows, err) {
+			return nil, 0, nil
+		}
+		r.logger.Errorf("Error occurred while retrieving position count: %v", err)
+		return nil, 0, err
+	}
+	return res, totalCount, nil
+
 }

@@ -10,12 +10,6 @@ type Recruiter struct {
 	Positions       []Position
 }
 
-type Company struct {
-	PublicID    string
-	Name        string
-	Description string
-}
-
 type Position struct {
 	PublicID string
 	Name     string

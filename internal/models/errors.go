@@ -9,4 +9,5 @@ var (
 	ErrUsernameExists      = errors.New("USERNAME_EXISTS")
 	ErrUserNotFound        = errors.New("USER_NOT_FOUND")
 	ErrPermissionDenied    = errors.New("PERMISSION_DENIED")
+	ErrCompanyNotFound     = errors.New("COMPANY_NOT_FOUND")
 )

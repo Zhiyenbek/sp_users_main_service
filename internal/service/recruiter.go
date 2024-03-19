@@ -1,6 +1,8 @@
 package service
 
 import (
+	"encoding/json"
+
 	"github.com/Zhiyenbek/sp-users-main-service/config"
 	"github.com/Zhiyenbek/sp-users-main-service/internal/models"
 	"github.com/Zhiyenbek/sp-users-main-service/internal/repository"
@@ -33,4 +35,24 @@ func (r *recruiterService) Exists(publicID string) error {
 
 func (r *recruiterService) GetRecruiter(publicID string) (*models.Recruiter, error) {
 	return r.recruiterRepo.GetRecruiter(publicID)
+}
+
+func (s *recruiterService) GetInterviewsByPublicID(publicID string, searchArgs *models.SearchArgs) ([]*models.InterviewResults, int, error) {
+	res, count, err := s.recruiterRepo.GetInterviewsByPublicID(publicID, searchArgs)
+	if err != nil {
+		return nil, 0, err
+	}
+	for _, r := range res {
+		if r != nil && r.RawResult != nil {
+			result := models.Result{}
+			err = json.Unmarshal(r.RawResult, &result)
+			if err != nil {
+				s.logger.Error(err)
+				return nil, 0, err
+			}
+			r.Result = result
+		}
+	}
+	return res, count, nil
+
 }
