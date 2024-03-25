@@ -55,21 +55,38 @@ func (h *handler) CandidateSignIn(c *gin.Context) {
 		c.JSON(400, sendResponse(-1, nil, models.ErrInvalidPasswordFormat))
 		return
 	}
-	var errMsg error
+
 	tokens, err := h.service.AuthService.CandidateLogin(req)
 	if err != nil {
 		h.logger.Errorf("Error occurred while login: %v", err)
 		switch {
 		case errors.Is(err, models.ErrWrongCredential):
-			errMsg = models.ErrWrongCredential
+			c.JSON(http.StatusBadRequest, sendResponse(-1, nil, models.ErrWrongCredential))
 		default:
-			c.JSON(500, sendResponse(-1, nil, models.ErrInternalServer))
+			c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
 			return
 		}
-		c.JSON(200, sendResponse(-1, nil, errMsg))
-		return
 	}
 	c.SetCookie("access_token", tokens.AccessToken.TokenValue, int(tokens.AccessToken.TTL.Seconds()), "/", h.cfg.Token.Access.Domain, true, true)
 	c.SetCookie("refresh_token", tokens.RefreshToken.TokenValue, int(tokens.RefreshToken.TTL.Seconds()), "/refresh-token", h.cfg.Token.Refresh.Domain, true, true)
-	c.JSON(200, sendResponse(0, nil, nil))
+	c.JSON(http.StatusOK, sendResponse(0, nil, nil))
+}
+
+func (h *handler) SignOut(c *gin.Context) {
+	cookie, err := c.Cookie("access_token")
+	if err != nil {
+		h.logger.Error(err)
+		c.AbortWithStatusJSON(401, sendResponse(-1, nil, models.ErrInvalidToken))
+		return
+	}
+	// Clear the access_token and refresh_token cookies
+	c.SetCookie("access_token", "", -1, "/", h.cfg.Token.Access.Domain, true, true)
+	c.SetCookie("refresh_token", "", -1, "/refresh-token", h.cfg.Token.Refresh.Domain, true, true)
+
+	err = h.service.AuthService.SignOut(cookie)
+	if err != nil {
+		c.AbortWithStatusJSON(500, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+	c.JSON(http.StatusOK, sendResponse(0, nil, nil))
 }
