@@ -425,7 +425,6 @@ func (r *candidateRepository) GetInterviewsByPublicID(publicID string, searchArg
 	INNER JOIN user_interviews ui ON ui.interview_id = i.id
 	INNER JOIN candidates c ON c.id = ui.candidate_id
 	WHERE c.public_id = $1
-	GROUP BY i.public_id, i.results
 `
 	var totalCount int
 	err = r.db.QueryRow(ctx, query, publicID).Scan(&totalCount)
