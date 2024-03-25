@@ -126,7 +126,7 @@ func (r *recruiterRepository) GetInterviewsByPublicID(publicID string, searchArg
 	defer cancel()
 
 	query := `
-	SELECT i.public_id, i.results
+	SELECT i.public_id, i.results, p.public_id
 	FROM interviews i
 	INNER JOIN user_interviews ui ON ui.interview_id = i.id
 	INNER JOIN positions p ON p.id = ui.position_id
@@ -152,6 +152,7 @@ func (r *recruiterRepository) GetInterviewsByPublicID(publicID string, searchArg
 		err = rows.Scan(
 			&result.PublicID,
 			&resultBytes,
+			&result.PositionPublicID,
 		)
 		if err != nil {
 			r.logger.Errorf("Error occurred while retrieving interview result: %v", err)

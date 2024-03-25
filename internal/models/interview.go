@@ -1,9 +1,10 @@
 package models
 
 type InterviewResults struct {
-	PublicID  string `json:"public_id"`
-	Result    Result `json:"result"`
-	RawResult []byte `json:"-"`
+	PublicID         string `json:"public_id"`
+	PositionPublicID string `json:"position_public_id"`
+	Result           Result `json:"result"`
+	RawResult        []byte `json:"-"`
 }
 
 type Question struct {
