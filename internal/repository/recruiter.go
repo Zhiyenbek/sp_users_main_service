@@ -69,7 +69,7 @@ func (r *recruiterRepository) GetRecruiter(publicID string) (*models.Recruiter, 
 	// Retrieve all positions for the recruiter
 	positionsQuery := `SELECT p.public_id, p.name, p.status
 	FROM positions p
-	WHERE p.recruiters_public_id = $1`
+	WHERE p.recruiter_public_id = $1`
 
 	rows, err := r.db.Query(ctx, positionsQuery, recruiter.PublicID)
 	if err != nil {
