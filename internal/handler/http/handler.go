@@ -47,7 +47,7 @@ func (h *handler) InitRoutes() *gin.Engine {
 	router.POST("/company", h.CreateCompany)
 	router.GET("/companies", h.GetCompanies)
 	router.GET("/company/:public_id", h.GetCompany)
-	router.PUT("/company", h.UpdateCompany)
+	router.PUT("/company/:public_id", h.UpdateCompany)
 	return router
 }
 
