@@ -38,6 +38,7 @@ func (h *handler) GetMe(c *gin.Context) {
 		}
 
 		c.JSON(http.StatusOK, sendResponse(0, res, nil))
+		return
 	case "recruiter":
 		if err := h.service.RecruiterService.Exists(publicID); err != nil {
 			if errors.Is(err, models.ErrPermissionDenied) {
@@ -64,6 +65,7 @@ func (h *handler) GetMe(c *gin.Context) {
 		}
 
 		c.JSON(http.StatusOK, sendResponse(0, res, nil))
+		return
 	}
 	c.JSON(http.StatusUnauthorized, sendResponse(0, nil, models.ErrPermissionDenied))
 }
