@@ -45,7 +45,13 @@ func (h *handler) UpdateCompany(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, sendResponse(0, nil, nil))
+	res, err := h.service.CompanyService.GetCompany(publicID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
+		return
+	}
+
+	c.JSON(http.StatusOK, sendResponse(0, res, nil))
 }
 
 func (h *handler) GetCompany(c *gin.Context) {
