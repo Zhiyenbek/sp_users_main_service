@@ -399,7 +399,7 @@ func (r *candidateRepository) GetInterviewsByPublicID(publicID string, searchArg
 		return nil, 0, err
 	}
 	defer rows.Close()
-	res := make([]*models.InterviewResults, 1)
+	res := make([]*models.InterviewResults, 0)
 	for rows.Next() {
 		var resultBytes []byte
 		result := &models.InterviewResults{}

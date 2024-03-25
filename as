@@ -10,38 +10,20 @@ GROUP BY p.recruiter_public_id;
   "questions": [
     {
       "question": "What is your experience with object-oriented programming?",
-      "evaluation": "Good",
-      "score": 8,
+      "evaluation": ,
+      "score": ,
       "video_link": "https://example.com/video1",
       "emotion_results": [
-        {
-          "emotion": "Happiness",
-          "exact_time": 24.5,
-          "duration": 10.2
-        },
-        {
-          "emotion": "Neutral",
-          "exact_time": 36.2,
-          "duration": 5.7
-        }
+
       ]
     },
     {
       "question": "Describe a challenging project you have worked on.",
-      "evaluation": "Excellent performance with exceptional problem-solving skills",
-      "score": 9,
+      "evaluation": ,
+      "score": ,
       "video_link": "https://example.com/video2",
       "emotion_results": [
-        {
-          "emotion": "Confidence",
-          "exact_time": 45.8,
-          "duration": 8.5
-        },
-        {
-          "emotion": "Determination",
-          "exact_time": 56.3,
-          "duration": 7.1
-        }
+
       ]
     }
   ],
