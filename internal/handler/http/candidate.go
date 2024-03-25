@@ -161,7 +161,7 @@ func (h *handler) DeleteSkillsFromCandidate(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
 		return
 	}
-	err := h.service.AddSkillsToCandidate(publicID, req.Skills)
+	err := h.service.DeleteSkillsFromCandidate(publicID, req.Skills)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
 		return
