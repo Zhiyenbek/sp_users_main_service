@@ -132,7 +132,7 @@ func (r *recruiterRepository) GetInterviewsByPublicID(publicID string, searchArg
 	INNER JOIN positions p ON p.id = ui.position_id
 	INNER JOIN recruiters r ON p.recruiter_public_id = r.public_id
 	WHERE r.public_id = $1
-	GROUP BY i.public_id, i.results
+	GROUP BY i.public_id, i.results, p.public_id
 	LIMIT $2 OFFSET $3;
 `
 	offset := (searchArgs.PageNum - 1) * searchArgs.PageSize
