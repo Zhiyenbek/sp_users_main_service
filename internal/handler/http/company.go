@@ -21,12 +21,14 @@ func (h *handler) CreateCompany(c *gin.Context) {
 		return
 	}
 
-	if err := h.service.CompanyService.CreateCompany(company); err != nil {
+	publicID, err := h.service.CompanyService.CreateCompany(company)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, sendResponse(-1, nil, models.ErrInternalServer))
 		return
 	}
+	company.PublicID = publicID
 
-	c.JSON(http.StatusCreated, sendResponse(0, nil, nil))
+	c.JSON(http.StatusCreated, sendResponse(0, company, nil))
 }
 
 func (h *handler) UpdateCompany(c *gin.Context) {

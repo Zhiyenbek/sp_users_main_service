@@ -6,19 +6,19 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
     public_id UUID UNIQUE DEFAULT uuid_generate_v4() NOT NULL,
-    first_name TEXT NOT NULL,
-    last_name TEXT,
-    email TEXT,
-    photo TEXT
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL DEFAULT '',
+    email VARCHAR(50) NOT NULL DEFAULT '',
+    photo VARCHAR(50) NOT NULL DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS candidates (
     id SERIAL PRIMARY KEY,
     public_id UUID UNIQUE NOT NULL,
-    current_position TEXT,
-    education TEXT,
-    resume TEXT,
-    bio TEXT
+    current_position VARCHAR(50) NOT NULL DEFAULT '',
+    education VARCHAR(50) NOT NULL DEFAULT '',
+    resume VARCHAR(50) NOT NULL DEFAULT '',
+    bio VARCHAR(50) NOT NULL DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS recruiters (
@@ -30,16 +30,16 @@ CREATE TABLE IF NOT EXISTS recruiters (
 CREATE TABLE IF NOT EXISTS companies (
     id SERIAL PRIMARY KEY,
     public_id UUID UNIQUE DEFAULT uuid_generate_v4() NOT NULL,
-    name TEXT,
-    logo TEXT,
-    description TEXT
+    name TEXT NOT NULL,
+    logo VARCHAR(50) NOT NULL DEFAULT '',
+    description VARCHAR(50) NOT NULL DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS positions (
     id SERIAL PRIMARY KEY,
     public_id UUID UNIQUE DEFAULT uuid_generate_v4() NOT NULL,
-    description TEXT,
-    name TEXT,
+    description VARCHAR(50) NOT NULL DEFAULT '',
+    name VARCHAR(50) NOT NULL DEFAULT '',
     status int DEFAULT 0,
     recruiter_public_id UUID NOT NULL
 );
@@ -47,14 +47,14 @@ CREATE TABLE IF NOT EXISTS positions (
 CREATE TABLE IF NOT EXISTS skills (
     id SERIAL PRIMARY KEY,
     public_id UUID UNIQUE DEFAULT uuid_generate_v4() NOT NULL,
-    name TEXT
+    name TEXT NOT NULL,
 );
 
 CREATE TABLE IF NOT EXISTS areas (
     id SERIAL PRIMARY KEY,
     public_id UUID UNIQUE DEFAULT uuid_generate_v4() NOT NULL,
     position_id INT,
-    name TEXT
+    name TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS interviews (
@@ -67,14 +67,14 @@ CREATE TABLE IF NOT EXISTS videos (
     id SERIAL PRIMARY KEY,
     public_id UUID UNIQUE DEFAULT uuid_generate_v4() NOT NULL,
     interviews_public_id UUID,
-    path TEXT
+    path VARCHAR(50) NOT NULL DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS auth (
     id SERIAL PRIMARY KEY,
     user_id INT UNIQUE,
     login TEXT UNIQUE,
-    password TEXT
+    password TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS position_skills (

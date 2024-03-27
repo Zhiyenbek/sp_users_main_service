@@ -13,7 +13,7 @@ type Repository struct {
 	CompanyRepository
 }
 type CompanyRepository interface {
-	CreateCompany(company *models.Company) error
+	CreateCompany(company *models.Company) (string, error)
 	UpdateCompany(company *models.Company) error
 	GetCompany(publicID string) (*models.Company, error)
 	GetCompanies(args *models.SearchArgs) ([]*models.Company, int, error)

@@ -25,21 +25,21 @@ func NewCompanyRepository(db *pgxpool.Pool, cfg *config.DBConf, logger *zap.Suga
 }
 
 // CreateCompany creates a new company in the database
-func (r *companyRepository) CreateCompany(company *models.Company) error {
+func (r *companyRepository) CreateCompany(company *models.Company) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), r.cfg.TimeOut)
 	defer cancel()
-
+	var publicID string
 	query := `
-		INSERT INTO companies ( name, logo, description)
-		VALUES ($1, $2, $3)`
+		INSERT INTO companies (name, logo, description)
+		VALUES ($1, $2, $3) RETURNING public_id`
 
-	_, err := r.db.Exec(ctx, query, company.Name, company.Logo, company.Description)
+	err := r.db.QueryRow(ctx, query, company.Name, company.Logo, company.Description).Scan(&publicID)
 	if err != nil {
 		r.logger.Errorf("Error occurred while creating company: %v", err)
-		return err
+		return "", err
 	}
 
-	return nil
+	return publicID, nil
 }
 
 // UpdateCompany updates an existing company in the database

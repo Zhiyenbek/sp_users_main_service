@@ -21,7 +21,7 @@ func NewCompanyService(companyRepo repository.CompanyRepository, cfg *config.Con
 	}
 }
 
-func (s *companyService) CreateCompany(company *models.Company) error {
+func (s *companyService) CreateCompany(company *models.Company) (string, error) {
 	return s.companyRepo.CreateCompany(company)
 }
 
