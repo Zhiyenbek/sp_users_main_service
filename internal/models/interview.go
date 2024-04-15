@@ -14,6 +14,8 @@ type Question struct {
 	Score          int             `json:"score"`
 	VideoLink      string          `json:"video_link"`
 	EmotionResults []EmotionResult `json:"emotion_results"`
+        Answer         string          `json:"answer"`
+	Emotion        string          `json:"emotion"`
 }
 
 type EmotionResult struct {
